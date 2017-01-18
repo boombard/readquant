@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+
 def read_kallisto(sample_path):
     ''' Function for reading a Kallisto quantification result.
 
@@ -23,7 +24,7 @@ def read_kallisto(sample_path):
     return df['TPM']
 
 
-def read_salmon(sample_path, isoforms=False, version='0.7.2'):
+def read_salmon(sample_path, isoforms=False, version='0.7.2', metric='TPM'):
     ''' Function for reading a Salmon quantification result.
 
     Parameters
@@ -40,6 +41,7 @@ def read_salmon(sample_path, isoforms=False, version='0.7.2'):
     -------
     A pandas.Series with the expression values in the sample.
     '''
+
     if isoforms:
         quant_file = sample_path + '/quant.sf'
     else:
@@ -48,24 +50,24 @@ def read_salmon(sample_path, isoforms=False, version='0.7.2'):
     read_kwargs = {
         '0.7.2': {
             'engine': 'c',
-            'usecols': ['Name', 'TPM'],
+            'usecols': ['Name', metric],
             'index_col': 0,
-            'dtype': {'Name': np.str, 'TPM': np.float64}
+            'dtype': {'Name': np.str, metric: np.float64}
         },
         '0.6.0': {
             'engine': 'c',
-            'usecols': ['Name', 'TPM'],
+            'usecols': ['Name', metric],
             'index_col': 0,
-            'dtype': {'Name': np.str, 'TPM': np.float64}
+            'dtype': {'Name': np.str, metric: np.float64}
         },
         '0.4.0': {
             'engine': 'c',
             'comment': '#',
             'header': None,
-            'names': ['Name', 'length', 'TPM', 'NumReads'],
-            'usecols': ['Name', 'TPM'],
+            'names': ['Name', 'length', metric, 'NumReads'],
+            'usecols': ['Name', metric],
             'index_col': 0,
-            'dtype': {'Name': np.str, 'TPM': np.float64}
+            'dtype': {'Name': np.str, metric: np.float64}
         }
     }
 
@@ -75,7 +77,7 @@ def read_salmon(sample_path, isoforms=False, version='0.7.2'):
     else:
         df = pd.read_table(quant_file, **read_kwargs[version])
         df = df.rename(columns={'Name': 'target_id'})
-        return df['TPM']
+        return df[metric]
 
 
 def read_cufflinks(sample_path, isoforms=False):

@@ -29,9 +29,11 @@ def qc(pattern='salmon/*_salmon_out', output='sample_qc.csv', version=None):
 
 @cli.command()
 @click.option('--tool', default='salmon')
+@click.option('--metric', default='TPM')
 @pass_common_args
-def quant(pattern, output, version="0.7.2", tool='salmon'):
-    quants = readquant.read_quants(pattern=pattern, tool=tool, version=version)
+def quant(pattern, output, version="0.7.2", tool='salmon', metric='TPM'):
+    quants = readquant.read_quants(pattern=pattern, tool=tool, version=version,
+                                   metric=metric)
     quants.to_csv(output)
 
 
