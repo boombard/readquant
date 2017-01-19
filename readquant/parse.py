@@ -135,8 +135,9 @@ def read_quants(pattern='salmon/*_salmon_out', tool='salmon', **kwargs):
     quants = pd.DataFrame()
     for sample_path in tqdm(iglob(pattern)):
         sample_quant = quant_reader(sample_path, **kwargs)
+        sample_name = os.path.split(sample_path)[-1]
         if sample_quant is not None:
-            quants[sample_path] = sample_quant
+            quants[sample_name] = sample_quant
 
     return quants
 
